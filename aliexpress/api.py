@@ -5,7 +5,7 @@ to get product information and affiliate links from AliExpress using the officia
 API in an easier way.
 """
 
-import top.api
+import aliexpress.top.api
 import json
 from types import SimpleNamespace
 
@@ -26,7 +26,11 @@ class AliexpressException(Exception):
 def get_product_id(text):
     """Returns product ID for a given link."""
     product_id = text.split('?')[0]
-    product_id = product_id.replace('.', '/').split('/')[-2]
+    product_id = product_id.replace('.', '/').split('/')
+    if len(product_id) == 1:
+        product_id = product_id[0]
+    else:
+        product_id = product_id[-2]
     try:
         return int(product_id)
     except ValueError:
@@ -49,7 +53,7 @@ class Aliexpress:
         self.tracking_id = tracking_id
         self.language = language
         self.currency = currency
-        top.setDefaultAppInfo(self.key, self.secret)
+        aliexpress.top.setDefaultAppInfo(self.key, self.secret)
 
     def product_info(self, product_id: str):
         """Find product information for a specific product on AliExpress.
@@ -59,7 +63,7 @@ class Aliexpress:
         """
         product_id = get_product_id(str(product_id))
         if product_id:
-            product = top.api.rest.AliexpressAffiliateProductdetailGetRequest()
+            product = aliexpress.top.api.rest.AliexpressAffiliateProductdetailGetRequest()
             product.app_signature = None
             product.fields = None
             product.product_ids = product_id
@@ -92,7 +96,7 @@ class Aliexpress:
             link (str): The URL that needs to be converted.
         """
         if self.tracking_id:
-            affiliate = top.api.rest.AliexpressAffiliateLinkGenerateRequest()
+            affiliate = aliexpress.top.api.rest.AliexpressAffiliateLinkGenerateRequest()
             affiliate.source_values = link
             affiliate.promotion_link_type = "0"
             affiliate.tracking_id = self.tracking_id

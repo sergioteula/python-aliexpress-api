@@ -12,7 +12,7 @@ import urllib
 import time
 import hashlib
 import json
-import top
+import aliexpress.top
 import itertools
 import mimetypes
 
@@ -180,9 +180,9 @@ class RestApi(object):
         self.__domain = domain
         self.__port = port
         self.__httpmethod = "POST"
-        if(top.getDefaultAppInfo()):
-            self.__app_key = top.getDefaultAppInfo().appkey
-            self.__secret = top.getDefaultAppInfo().secret
+        if(aliexpress.top.getDefaultAppInfo()):
+            self.__app_key = aliexpress.top.getDefaultAppInfo().appkey
+            self.__secret = aliexpress.top.getDefaultAppInfo().secret
         
     def get_request_header(self):
         return {
@@ -195,7 +195,7 @@ class RestApi(object):
         #=======================================================================
         # 设置请求的app信息
         # @param appinfo: import top
-        #                 appinfo top.appinfo(appkey,secret)
+        #                 appinfo aliexpress.top.appinfo(appkey,secret)
         #=======================================================================
         self.__app_key = appinfo.appkey
         self.__secret = appinfo.secret

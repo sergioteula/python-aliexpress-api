@@ -29,21 +29,21 @@ Usage guide
 -----------
 **Get product information:**
 
-    from aliexpress import Aliexpress
+    from aliexpress.api import Aliexpress
     aliexpress = Aliexpress(KEY, SECRET, 'ES', 'EUR', TRACKING_ID)
     product = aliexpress.product_info('1000006468625')
     print(product.product_title)
 
 **Get affiliate link:**
 
-    from aliexpress import Aliexpress
+    from aliexpress.api import Aliexpress
     aliexpress = Aliexpress(KEY, SECRET, 'EN', 'USD', TRACKING_ID)
     url = aliexpress.affiliate_link('https://aliexpress.com/item/1000006468625.html')
 
 Changelog
 -------------
 
-    Version 1.0.1
+    Version 1.0.2
         -First release.
 
 License

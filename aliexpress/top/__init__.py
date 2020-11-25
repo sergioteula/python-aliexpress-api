@@ -3,7 +3,7 @@ Created on 2012-6-29
 
 @author: lihao
 '''
-from top.api.base import sign
+from aliexpress.top.api.base import sign
 
 
 
