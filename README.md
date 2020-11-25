@@ -2,7 +2,7 @@ AliExpress API wrapper for Python
 =======================================================
 A simple Python wrapper for the [AliExpress Open Platform API](https://developers.aliexpress.com). This module allows to get product information and affiliate links from AliExpress using the official API in an easier way.
 
-[![PyPI](https://img.shields.io/pypi/v/python-aliexpress-api?color=%231182C2&label=PyPI)](https://pypi.org/project/python-amazon-paapi/)
+[![PyPI](https://img.shields.io/pypi/v/python-aliexpress-api?color=%231182C2&label=PyPI)](https://pypi.org/project/python-aliexpress-api/)
 [![Python](https://img.shields.io/badge/Python-3.x-%23FFD140)](https://www.python.org/)
 [![License](https://img.shields.io/badge/License-MIT-%23e83633)](https://github.com/sergioteula/python-aliexpress-api/blob/master/LICENSE)
 [![Support](https://img.shields.io/badge/Support-Good-brightgreen)](https://github.com/sergioteula/python-aliexpress-api/issues)
