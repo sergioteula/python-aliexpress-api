@@ -5,7 +5,8 @@ to get product information and affiliate links from AliExpress using the officia
 API in an easier way.
 """
 
-from .skd import api, setDefaultAppInfo
+from .skd import setDefaultAppInfo
+from .skd import api as aliapi
 import json
 from types import SimpleNamespace
 
@@ -63,7 +64,7 @@ class AliexpressApi:
         """
         product_id = get_product_id(str(product_id))
         if product_id:
-            product = api.rest.AliexpressAffiliateProductdetailGetRequest()
+            product = aliapi.rest.AliexpressAffiliateProductdetailGetRequest()
             product.app_signature = None
             product.fields = None
             product.product_ids = product_id
@@ -96,7 +97,7 @@ class AliexpressApi:
             link (str): The URL that needs to be converted.
         """
         if self.tracking_id:
-            affiliate = api.rest.AliexpressAffiliateLinkGenerateRequest()
+            affiliate = aliapi.rest.AliexpressAffiliateLinkGenerateRequest()
             affiliate.source_values = link
             affiliate.promotion_link_type = "0"
             affiliate.tracking_id = self.tracking_id
@@ -126,7 +127,7 @@ class AliexpressApi:
         Args:
             product_id (str): One item ID or product URL.
         """
-        promo = api.rest.AliexpressAffiliateHotproductQueryRequest()
+        promo = aliapi.rest.AliexpressAffiliateHotproductQueryRequest()
         promo.app_signature = None
         # promo.fields = None
         # promo.category_id = '204000021'
