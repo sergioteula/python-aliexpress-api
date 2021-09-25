@@ -7,35 +7,11 @@ API in an easier way.
 
 from .skd import setDefaultAppInfo
 from .skd import api as aliapi
-import json
+from .tools import get_product_id
+from .errors import AliexpressException
+
 from types import SimpleNamespace
-
-
-class AliexpressException(Exception):
-    """Custom exception class for AliExpress API."""
-    def __init__(self, status=None, reason=None):
-        self.status = status
-        self.reason = reason
-
-    def __str__(self):
-        if self.reason:
-            return '%s: %s' % (self.status, self.reason)
-        else:
-            return '%s' % (self.status)
-
-
-def get_product_id(text):
-    """Returns product ID for a given link."""
-    product_id = text.split('?')[0]
-    product_id = product_id.replace('.', '/').split('/')
-    if len(product_id) == 1:
-        product_id = product_id[0]
-    else:
-        product_id = product_id[-2]
-    try:
-        return int(product_id)
-    except ValueError:
-        return None
+import json
 
 
 class AliexpressApi:
