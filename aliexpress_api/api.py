@@ -9,13 +9,14 @@ from .skd import setDefaultAppInfo
 from .skd import api as aliapi
 from .tools import get_product_id
 from .errors import AliexpressException
+from .models import Language, Currency
 
 from types import SimpleNamespace
 import json
 
 
 class AliexpressApi:
-    """Creates an instance containing your API credentials.
+    """Provides methods to get information from AliExpress using your API credentials.
 
     Args:
         key (str): Your API key.
@@ -24,13 +25,15 @@ class AliexpressApi:
         currency (str): Currency code. Defaults to USD.
         tracking_id (str): The tracking id for link generator. Defaults to None.
     """
-    def __init__(self, key: str, secret: str, language='EN', currency='USD', tracking_id=None):
-        self.key = key
-        self.secret = secret
-        self.tracking_id = tracking_id
-        self.language = language
-        self.currency = currency
-        setDefaultAppInfo(self.key, self.secret)
+
+    def __init__(self, key: str, secret: str, language: Language, currency: Currency, tracking_id: str = None, **kwargs):
+        self._key = key
+        self._secret = secret
+        self._tracking_id = tracking_id
+        self._language = language
+        self._currency = currency
+        setDefaultAppInfo(self._key, self._secret)
+
 
     def product_info(self, product_id: str):
         """Find product information for a specific product on AliExpress.
@@ -44,9 +47,9 @@ class AliexpressApi:
             product.app_signature = None
             product.fields = None
             product.product_ids = product_id
-            product.target_currency = self.currency
-            product.target_language = self.language
-            product.tracking_id = self.tracking_id
+            product.target_currency = self._currency
+            product.target_language = self._language
+            product.tracking_id = self._tracking_id
             try:
                 response = product.getResponse()
                 response = json.dumps(response)
@@ -72,11 +75,11 @@ class AliexpressApi:
         Args:
             link (str): The URL that needs to be converted.
         """
-        if self.tracking_id:
+        if self._tracking_id:
             affiliate = aliapi.rest.AliexpressAffiliateLinkGenerateRequest()
             affiliate.source_values = link
             affiliate.promotion_link_type = "0"
-            affiliate.tracking_id = self.tracking_id
+            affiliate.tracking_id = self._tracking_id
             try:
                 response = affiliate.getResponse()
                 response = json.dumps(response)
@@ -107,9 +110,9 @@ class AliexpressApi:
         promo.app_signature = None
         # promo.fields = None
         # promo.category_id = '204000021'
-        promo.target_currency = self.currency
-        promo.target_language = self.language
-        promo.tracking_id = self.tracking_id
+        promo.target_currency = self._currency
+        promo.target_language = self._language
+        promo.tracking_id = self._tracking_id
         # promo.fields="commission_rate,sale_price"
         promo.page_no=1
         promo.page_size=50
