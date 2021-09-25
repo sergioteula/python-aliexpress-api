@@ -29,15 +29,15 @@ Usage guide
 -----------
 **Get product information:**
 
-    from aliexpress_api import Aliexpress
-    aliexpress = Aliexpress(KEY, SECRET, 'ES', 'EUR', TRACKING_ID)
+    from aliexpress_api import AliexpressApi
+    aliexpress = AliexpressApi(KEY, SECRET, 'ES', 'EUR', TRACKING_ID)
     product = aliexpress.product_info('1000006468625')
     print(product.product_title)
 
 **Get affiliate link:**
 
-    from aliexpress_api import Aliexpress
-    aliexpress = Aliexpress(KEY, SECRET, 'EN', 'USD', TRACKING_ID)
+    from aliexpress_api import AliexpressApi
+    aliexpress = AliexpressApi(KEY, SECRET, 'EN', 'USD', TRACKING_ID)
     url = aliexpress.affiliate_link('https://aliexpress.com/item/1000006468625.html')
 
 

@@ -5,7 +5,7 @@ to get product information and affiliate links from AliExpress using the officia
 API in an easier way.
 """
 
-import aliexpress.top.api
+from .skd import api, setDefaultAppInfo
 import json
 from types import SimpleNamespace
 
@@ -37,7 +37,7 @@ def get_product_id(text):
         return None
 
 
-class Aliexpress:
+class AliexpressApi:
     """Creates an instance containing your API credentials.
 
     Args:
@@ -53,7 +53,7 @@ class Aliexpress:
         self.tracking_id = tracking_id
         self.language = language
         self.currency = currency
-        aliexpress.top.setDefaultAppInfo(self.key, self.secret)
+        setDefaultAppInfo(self.key, self.secret)
 
     def product_info(self, product_id: str):
         """Find product information for a specific product on AliExpress.
@@ -63,7 +63,7 @@ class Aliexpress:
         """
         product_id = get_product_id(str(product_id))
         if product_id:
-            product = aliexpress.top.api.rest.AliexpressAffiliateProductdetailGetRequest()
+            product = api.rest.AliexpressAffiliateProductdetailGetRequest()
             product.app_signature = None
             product.fields = None
             product.product_ids = product_id
@@ -96,7 +96,7 @@ class Aliexpress:
             link (str): The URL that needs to be converted.
         """
         if self.tracking_id:
-            affiliate = aliexpress.top.api.rest.AliexpressAffiliateLinkGenerateRequest()
+            affiliate = api.rest.AliexpressAffiliateLinkGenerateRequest()
             affiliate.source_values = link
             affiliate.promotion_link_type = "0"
             affiliate.tracking_id = self.tracking_id
@@ -118,3 +118,45 @@ class Aliexpress:
                 raise AliexpressException(e)
         else:
             raise AliexpressException('Tracking ID not specified')
+
+
+    def featured_promos(self):
+        """Find product information for a specific product on AliExpress.
+
+        Args:
+            product_id (str): One item ID or product URL.
+        """
+        promo = api.rest.AliexpressAffiliateHotproductQueryRequest()
+        promo.app_signature = None
+        # promo.fields = None
+        # promo.category_id = '204000021'
+        promo.target_currency = self.currency
+        promo.target_language = self.language
+        promo.tracking_id = self.tracking_id
+        # promo.fields="commission_rate,sale_price"
+        promo.page_no=1
+        promo.page_size=50
+        # promo.promotion_end_time="2021-12-12 00:00:00"
+        # promo.promotion_name="singles' day big sale"
+        # promo.promotion_start_time="2021-09-25 00:00:00"
+        promo.sort="commissionAsc"
+        # promo.target_currency="USD"
+        # promo.target_language="EN"
+        # promo.country="US"
+        promo.keywords="tablet"
+        try:
+            response = promo.getResponse()
+            response = json.dumps(response)
+            response = json.loads(response, object_hook=lambda d: SimpleNamespace(**d))
+            response = response.aliexpress_affiliate_hotproduct_query_response.resp_result
+            if response.resp_code == 200:
+                response = response.result
+                if response.current_record_count > 0:
+                    response = response.products.product
+                    return response
+                else:
+                    raise AliexpressException('Product not available')
+            else:
+                raise AliexpressException('Server not reached')
+        except Exception as e:
+            raise AliexpressException(e)
