@@ -1,11 +1,12 @@
 '''
-Created by auto_sdk on 2020.05.19
+Created by auto_sdk on 2021.05.17
 '''
-from aliexpress.top.api.base import RestApi
+from ..base import RestApi
 class AliexpressAffiliateProductdetailGetRequest(RestApi):
 	def __init__(self,domain='gw.api.taobao.com',port=80):
 		RestApi.__init__(self,domain, port)
 		self.app_signature = None
+		self.country = None
 		self.fields = None
 		self.product_ids = None
 		self.target_currency = None

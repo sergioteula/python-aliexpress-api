@@ -1,7 +1,7 @@
 '''
-Created by auto_sdk on 2020.06.02
+Created by auto_sdk on 2020.09.25
 '''
-from aliexpress.top.api.base import RestApi
+from ..base import RestApi
 class AliexpressAffiliateFeaturedpromoGetRequest(RestApi):
 	def __init__(self,domain='gw.api.taobao.com',port=80):
 		RestApi.__init__(self,domain, port)
