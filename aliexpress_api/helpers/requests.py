@@ -7,7 +7,7 @@ def api_request(request, response_name):
     try:
         response = request.getResponse()
     except Exception as e:
-        raise ApiRequestException(e)
+        raise ApiRequestException(e.message)
 
     try:
         response = response[response_name]['resp_result']
@@ -19,4 +19,4 @@ def api_request(request, response_name):
     if response.resp_code == 200:
         return response.result
     else:
-        raise ApiRequestResponseException(f'Response code {response.resp_code} - ')
+        raise ApiRequestResponseException(f'Response code {response.resp_code} - {response.resp_msg}')
