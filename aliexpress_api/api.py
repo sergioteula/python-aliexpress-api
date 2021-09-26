@@ -8,8 +8,9 @@ API in an easier way.
 from .skd import setDefaultAppInfo
 from .skd import api as aliapi
 from .tools import get_product_id
-from .errors import AliexpressException
+from .errors import AliexpressException, ProductsNotFoudException
 from .models import Language, Currency
+from .helpers import api_request
 
 from types import SimpleNamespace
 import json
@@ -106,37 +107,19 @@ class AliexpressApi:
         Args:
             product_id (str): One item ID or product URL.
         """
-        promo = aliapi.rest.AliexpressAffiliateHotproductQueryRequest()
-        promo.app_signature = None
-        # promo.fields = None
-        # promo.category_id = '204000021'
-        promo.target_currency = self._currency
-        promo.target_language = self._language
-        promo.tracking_id = self._tracking_id
-        # promo.fields="commission_rate,sale_price"
-        promo.page_no=1
-        promo.page_size=50
-        # promo.promotion_end_time="2021-12-12 00:00:00"
-        # promo.promotion_name="singles' day big sale"
-        # promo.promotion_start_time="2021-09-25 00:00:00"
-        promo.sort="commissionAsc"
-        # promo.target_currency="USD"
-        # promo.target_language="EN"
-        # promo.country="US"
-        promo.keywords="tablet"
-        try:
-            response = promo.getResponse()
-            response = json.dumps(response)
-            response = json.loads(response, object_hook=lambda d: SimpleNamespace(**d))
-            response = response.aliexpress_affiliate_hotproduct_query_response.resp_result
-            if response.resp_code == 200:
-                response = response.result
-                if response.current_record_count > 0:
-                    response = response.products.product
-                    return response
-                else:
-                    raise AliexpressException('Product not available')
-            else:
-                raise AliexpressException('Server not reached')
-        except Exception as e:
-            raise AliexpressException(e)
+        request = aliapi.rest.AliexpressAffiliateHotproductQueryRequest()
+        request.target_currency = self._currency
+        request.target_language = self._language
+        request.tracking_id = self._tracking_id
+        request.page_no=1
+        request.page_size=50
+        request.sort="commissionAsc"
+        request.keywords="tablet"
+
+        response = api_request(request, 'aliexpress_affiliate_hotproduct_query_response')
+
+        if response.current_record_count > 0:
+            response = response.products.product
+            return response
+        else:
+            raise ProductsNotFoudException('No products found with current parameters')

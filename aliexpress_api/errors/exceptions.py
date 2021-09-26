@@ -24,8 +24,12 @@ class ApiRequestException(AliexpressException):
     """Raised if the request to AliExpress API fails"""
     pass
 
-class ItemsNotFoudException(AliexpressException):
-    """Raised if no items are found"""
+class ApiRequestResponseException(AliexpressException):
+    """Raised if the request response is not valid"""
+    pass
+
+class ProductsNotFoudException(AliexpressException):
+    """Raised if no products are found"""
     pass
 
 class TooManyRequestsException(AliexpressException):
