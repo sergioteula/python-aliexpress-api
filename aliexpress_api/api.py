@@ -27,12 +27,20 @@ class AliexpressApi:
         tracking_id (str): The tracking id for link generator. Defaults to None.
     """
 
-    def __init__(self, key: str, secret: str, language: Language, currency: Currency, tracking_id: str = None, **kwargs):
+    def __init__(self,
+        key: str,
+        secret: str,
+        language: Language,
+        currency: Currency,
+        tracking_id: str = None,
+        app_signature: str = None,
+        **kwargs):
         self._key = key
         self._secret = secret
         self._tracking_id = tracking_id
         self._language = language
         self._currency = currency
+        self._app_signature = app_signature
         setDefaultAppInfo(self._key, self._secret)
 
 
@@ -101,25 +109,45 @@ class AliexpressApi:
             raise AliexpressException('Tracking ID not specified')
 
 
-    def featured_promos(self):
+    def get_hotproducts(self,
+        category_ids = None,
+		delivery_days = None,
+		fields = None,
+		keywords = None,
+		max_sale_price = None,
+		min_sale_price = None,
+		page_no = None,
+		page_size = None,
+		platform_product_type = None,
+		ship_to_country = None,
+		sort = None,
+        **kwargs):
         """Find product information for a specific product on AliExpress.
 
         Args:
             product_id (str): One item ID or product URL.
         """
         request = aliapi.rest.AliexpressAffiliateHotproductQueryRequest()
+        request.app_signature = self._app_signature
+        request.category_ids = category_ids
+        request.delivery_days = delivery_days
+        request.fields = fields
+        request.keywords = keywords
+        request.max_sale_price = max_sale_price
+        request.min_sale_price = min_sale_price
+        request.page_no = page_no
+        request.page_size = page_size
+        request.platform_product_type = platform_product_type
+        request.ship_to_country = ship_to_country
+        request.sort = sort
         request.target_currency = self._currency
         request.target_language = self._language
         request.tracking_id = self._tracking_id
-        request.page_no=1
-        request.page_size=50
-        request.sort="commissionAsc"
-        request.keywords="tablet"
 
         response = api_request(request, 'aliexpress_affiliate_hotproduct_query_response')
 
         if response.current_record_count > 0:
-            response = response.products.product
+            response.products = response.products.product
             return response
         else:
             raise ProductsNotFoudException('No products found with current parameters')
