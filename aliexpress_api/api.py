@@ -9,8 +9,8 @@ from .skd import setDefaultAppInfo
 from .skd import api as aliapi
 from .tools import get_product_id
 from .errors import AliexpressException, ProductsNotFoudException
-from .models import Language, Currency
 from .helpers import api_request
+from . import models
 
 from types import SimpleNamespace
 import json
@@ -30,8 +30,8 @@ class AliexpressApi:
     def __init__(self,
         key: str,
         secret: str,
-        language: Language,
-        currency: Currency,
+        language: models.Language,
+        currency: models.Currency,
         tracking_id: str = None,
         app_signature: str = None,
         **kwargs):
@@ -110,17 +110,17 @@ class AliexpressApi:
 
 
     def get_hotproducts(self,
-        category_ids = None,
-		delivery_days = None,
-		fields = None,
-		keywords = None,
-		max_sale_price = None,
-		min_sale_price = None,
-		page_no = None,
-		page_size = None,
-		platform_product_type = None,
-		ship_to_country = None,
-		sort = None,
+        category_ids: str = None,
+        delivery_days: str = None,
+		fields: str = None,
+		keywords: str = None,
+		max_sale_price: int = None,
+		min_sale_price: int = None,
+		page_no: int = None,
+		page_size: int = None,
+		platform_product_type: models.ProductType = None,
+		ship_to_country: str = None,
+		sort: models.SortBy = None,
         **kwargs):
         """Find product information for a specific product on AliExpress.
 
