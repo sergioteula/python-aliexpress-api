@@ -8,11 +8,12 @@ API in an easier way.
 from .skd import setDefaultAppInfo
 from .skd import api as aliapi
 from .tools import get_product_id
-from .errors import AliexpressException, ProductsNotFoudException
+from .errors import AliexpressException, ProductsNotFoudException, InvalidTrackingIdException
 from .helpers import api_request
 from . import models
 
 from types import SimpleNamespace
+from typing import List, Union
 import json
 
 
@@ -78,35 +79,31 @@ class AliexpressApi:
         else:
             raise AliexpressException('Product ID not found')
 
-    def affiliate_link(self, link: str):
-        """Creates affiliate link for a specific product.
+    def get_affiliate_links(self,
+        links: Union[str, List[str]],
+        link_type: models.LinkType = models.LinkType.NORMAL,
+        **kwargs):
+        """Create affiliate links.
 
         Args:
             link (str): The URL that needs to be converted.
         """
-        if self._tracking_id:
-            affiliate = aliapi.rest.AliexpressAffiliateLinkGenerateRequest()
-            affiliate.source_values = link
-            affiliate.promotion_link_type = "0"
-            affiliate.tracking_id = self._tracking_id
-            try:
-                response = affiliate.getResponse()
-                response = json.dumps(response)
-                response = json.loads(response, object_hook=lambda d: SimpleNamespace(**d))
-                response = response.aliexpress_affiliate_link_generate_response.resp_result
-                if response.resp_code == 200:
-                    response = response.result
-                    if response.total_result_count > 0:
-                        response = response.promotion_links.promotion_link[0].promotion_link
-                        return response
-                    else:
-                        raise AliexpressException('Affiliate link not available')
-                else:
-                    raise AliexpressException('Server not reached')
-            except Exception as e:
-                raise AliexpressException(e)
+        if not self._tracking_id:
+            raise InvalidTrackingIdException('The tracking id is required for affiliate links')
+
+        request = aliapi.rest.AliexpressAffiliateLinkGenerateRequest()
+        request.app_signature = self._app_signature
+        request.source_values = links
+        request.promotion_link_type = link_type
+        request.tracking_id = self._tracking_id
+
+        response = api_request(request, 'aliexpress_affiliate_link_generate_response')
+
+        if response.total_result_count > 0:
+            response.promotion_links = response.promotion_links.promotion_link
+            return response
         else:
-            raise AliexpressException('Tracking ID not specified')
+            raise ProductsNotFoudException('Affiliate links not available')
 
 
     def get_hotproducts(self,

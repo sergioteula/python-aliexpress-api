@@ -36,8 +36,8 @@ class TooManyRequestsException(AliexpressException):
     """Raised when requests limit is reached"""
     pass
 
-class InvalidPartnerTagException(AliexpressException):
-    """Raised if the partner tag is not present or invalid"""
+class InvalidTrackingIdException(AliexpressException):
+    """Raised if the tracking ID is not present or invalid"""
     pass
 
 class AssociateValidationException(AliexpressException):
