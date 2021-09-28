@@ -111,7 +111,7 @@ class AliexpressApi:
 
     def get_hotproducts(self,
         category_ids: str = None,
-        delivery_days: str = None,
+        delivery_days: int = None,
 		fields: str = None,
 		keywords: str = None,
 		max_sale_price: int = None,
@@ -122,15 +122,28 @@ class AliexpressApi:
 		ship_to_country: str = None,
 		sort: models.SortBy = None,
         **kwargs):
-        """Find product information for a specific product on AliExpress.
+        """Search for affiliated products with high commission.
 
         Args:
-            product_id (str): One item ID or product URL.
+            category_ids (``str``): One or more category IDs separated by commas.
+            delivery_days (``int``): Estimated delivery days.
+            fields (``str``): The fields to include in the results list separated by commas.
+            keywords (``str``): Search products based on keywords.
+            max_sale_price (``int``): Filters products with price below the specified value.
+                Prices appear in lowest currency denomination. So $31.41 should be 3141.
+            min_sale_price (``int``): Filters products with price above the specified value.
+                Prices appear in lowest currency denomination. So $31.41 should be 3141.
+            page_no (``int``):
+            page_size (``int``): Products on each page. Should be between 1 and 50.
+            platform_product_type (``models.ProductType``): Specify platform product type.
+            ship_to_country (``str``): Filter products that can be sent to that country.
+                Returns the price according to the country's tax rate policy.
+            sort (``models.SortBy``): Specifies the sort method.
         """
         request = aliapi.rest.AliexpressAffiliateHotproductQueryRequest()
         request.app_signature = self._app_signature
         request.category_ids = category_ids
-        request.delivery_days = delivery_days
+        request.delivery_days = str(delivery_days)
         request.fields = fields
         request.keywords = keywords
         request.max_sale_price = max_sale_price
