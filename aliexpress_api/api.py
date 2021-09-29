@@ -132,7 +132,7 @@ class AliexpressApi:
 		platform_product_type: models.ProductType = None,
 		ship_to_country: str = None,
 		sort: models.SortBy = None,
-        **kwargs):
+        **kwargs) -> models.HotProductsResponse:
         """Search for affiliated products with high commission.
 
         Args:
@@ -150,6 +150,14 @@ class AliexpressApi:
             ship_to_country (``str``): Filter products that can be sent to that country.
                 Returns the price according to the country's tax rate policy.
             sort (``models.SortBy``): Specifies the sort method.
+
+        Returns:
+            ``models.HotProductsResponse``: Contains response information and the list of products.
+
+        Raises:
+            ``ProductsNotFoudException``
+            ``ApiRequestException``
+            ``ApiRequestResponseException``
         """
         request = aliapi.rest.AliexpressAffiliateHotproductQueryRequest()
         request.app_signature = self._app_signature
