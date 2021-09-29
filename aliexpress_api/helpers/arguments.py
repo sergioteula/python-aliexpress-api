@@ -1,12 +1,12 @@
 from ..errors.exceptions import InvalidArgumentException
 
 
-def get_links_string(links):
-    if isinstance(links, str):
-        return links
+def get_list_as_string(value):
+    if isinstance(value, str):
+        return value
 
-    elif isinstance(links, list):
-        return ','.join(links)
+    elif isinstance(value, list):
+        return ','.join(value)
 
     else:
-        raise InvalidArgumentException('Links argument should be a list or string')
+        raise InvalidArgumentException('Argument should be a list or string: ' + str(value))

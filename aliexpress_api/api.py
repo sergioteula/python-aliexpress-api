@@ -9,7 +9,7 @@ from .skd import setDefaultAppInfo
 from .skd import api as aliapi
 from .tools import get_product_id
 from .errors import AliexpressException, ProductsNotFoudException, InvalidTrackingIdException
-from .helpers import api_request, parse_products, get_links_string
+from .helpers import api_request, parse_products, get_list_as_string
 from . import models
 
 from types import SimpleNamespace
@@ -104,7 +104,7 @@ class AliexpressApi:
         if not self._tracking_id:
             raise InvalidTrackingIdException('The tracking id is required for affiliate links')
 
-        links = get_links_string(links)
+        links = get_list_as_string(links)
 
         request = aliapi.rest.AliexpressAffiliateLinkGenerateRequest()
         request.app_signature = self._app_signature
@@ -121,9 +121,9 @@ class AliexpressApi:
 
 
     def get_hotproducts(self,
-        category_ids: str = None,
+        category_ids: Union[str, List[str]] = None,
         delivery_days: int = None,
-		fields: str = None,
+		fields: Union[str, List[str]] = None,
 		keywords: str = None,
 		max_sale_price: int = None,
 		min_sale_price: int = None,
@@ -136,9 +136,9 @@ class AliexpressApi:
         """Search for affiliated products with high commission.
 
         Args:
-            category_ids (``str``): One or more category IDs separated by commas.
+            category_ids (``str | list[str]``): One or more category IDs separated by commas.
             delivery_days (``int``): Estimated delivery days.
-            fields (``str``): The fields to include in the results list separated by commas.
+            fields (``str | list[str]``): The fields to include in the results list separated by commas.
             keywords (``str``): Search products based on keywords.
             max_sale_price (``int``): Filters products with price below the specified value.
                 Prices appear in lowest currency denomination. So $31.41 should be 3141.
@@ -161,9 +161,9 @@ class AliexpressApi:
         """
         request = aliapi.rest.AliexpressAffiliateHotproductQueryRequest()
         request.app_signature = self._app_signature
-        request.category_ids = category_ids
+        request.category_ids = get_list_as_string(category_ids)
         request.delivery_days = str(delivery_days)
-        request.fields = fields
+        request.fields = get_list_as_string(fields)
         request.keywords = keywords
         request.max_sale_price = max_sale_price
         request.min_sale_price = min_sale_price
