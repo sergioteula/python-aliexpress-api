@@ -9,8 +9,7 @@ from .skd import setDefaultAppInfo
 from .skd import api as aliapi
 from .tools import get_product_id
 from .errors import AliexpressException, ProductsNotFoudException, InvalidTrackingIdException
-from .helpers import api_request
-from .helpers import get_links_string
+from .helpers import api_request, parse_products, get_links_string
 from . import models
 
 from types import SimpleNamespace
@@ -172,7 +171,7 @@ class AliexpressApi:
         response = api_request(request, 'aliexpress_affiliate_hotproduct_query_response')
 
         if response.current_record_count > 0:
-            response.products = response.products.product
+            response.products = parse_products(response.products.product)
             return response
         else:
             raise ProductsNotFoudException('No products found with current parameters')
