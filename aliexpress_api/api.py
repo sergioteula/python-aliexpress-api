@@ -91,6 +91,16 @@ class AliexpressApi:
                 separated by commas.
             link_type (``models.LinkType``): Choose between normal link with standard commission
                 or hot link with hot product commission. Defaults to NORMAL.
+
+        Returns:
+            ``list[models.AffiliateLink]``: A list containing the affiliate links.
+
+        Raises:
+            ``InvalidArgumentException``
+            ``InvalidTrackingIdException``
+            ``ProductsNotFoudException``
+            ``ApiRequestException``
+            ``ApiRequestResponseException``
         """
         if not self._tracking_id:
             raise InvalidTrackingIdException('The tracking id is required for affiliate links')
