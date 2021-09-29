@@ -82,7 +82,7 @@ class AliexpressApi:
     def get_affiliate_links(self,
         links: Union[str, List[str]],
         link_type: models.LinkType = models.LinkType.NORMAL,
-        **kwargs):
+        **kwargs) -> List[models.AffiliateLink]:
         """Create affiliate links.
 
         Args:
@@ -100,8 +100,7 @@ class AliexpressApi:
         response = api_request(request, 'aliexpress_affiliate_link_generate_response')
 
         if response.total_result_count > 0:
-            response.promotion_links = response.promotion_links.promotion_link
-            return response
+            return response.promotion_links.promotion_link
         else:
             raise ProductsNotFoudException('Affiliate links not available')
 
