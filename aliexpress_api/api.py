@@ -84,10 +84,13 @@ class AliexpressApi:
         links: Union[str, List[str]],
         link_type: models.LinkType = models.LinkType.NORMAL,
         **kwargs) -> List[models.AffiliateLink]:
-        """Create affiliate links.
+        """Converts a list of links in affiliate links.
 
         Args:
-            link (str): The URL that needs to be converted.
+            links (``str | list[str]``): One or more links as a list of strings or a string
+                separated by commas.
+            link_type (``models.LinkType``): Choose between normal link with standard commission
+                or hot link with hot product commission. Defaults to NORMAL.
         """
         if not self._tracking_id:
             raise InvalidTrackingIdException('The tracking id is required for affiliate links')
