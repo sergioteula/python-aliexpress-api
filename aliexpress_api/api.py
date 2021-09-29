@@ -10,6 +10,7 @@ from .skd import api as aliapi
 from .tools import get_product_id
 from .errors import AliexpressException, ProductsNotFoudException, InvalidTrackingIdException
 from .helpers import api_request
+from .helpers import get_links_string
 from . import models
 
 from types import SimpleNamespace
@@ -90,6 +91,8 @@ class AliexpressApi:
         """
         if not self._tracking_id:
             raise InvalidTrackingIdException('The tracking id is required for affiliate links')
+
+        links = get_links_string(links)
 
         request = aliapi.rest.AliexpressAffiliateLinkGenerateRequest()
         request.app_signature = self._app_signature
