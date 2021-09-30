@@ -3,3 +3,4 @@
 __author__ = 'Sergio Abad'
 
 from .api import AliexpressApi
+from .api import models
