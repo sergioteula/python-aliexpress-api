@@ -10,6 +10,7 @@ A simple Python wrapper for the [AliExpress Open Platform API](https://developer
 ## Features
 
 - Object oriented interface for simple usage.
+- Requests follow the [official documentation](https://developers.aliexpress.com/en/doc.htm?docId=45803&docType=2).
 - Ask for new features through the [issues](https://github.com/sergioteula/python-aliexpress-api/issues) section.
 - Join our [Telegram group](https://t.me/PythonAliExpressAPI) for support or development.
 
