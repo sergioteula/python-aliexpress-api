@@ -5,6 +5,7 @@ to get product information and affiliate links from AliExpress using the officia
 API in an easier way.
 """
 
+from aliexpress_api.helpers.arguments import get_product_ids
 from .skd import setDefaultAppInfo
 from .skd import api as aliapi
 from .tools import get_product_id
@@ -45,39 +46,36 @@ class AliexpressApi:
         setDefaultAppInfo(self._key, self._secret)
 
 
-    def product_info(self, product_id: str):
+    def get_products_details(self,
+        product_ids: Union[str, List[str]],
+        fields: Union[str, List[str]] = None,
+        country: str = None,
+        **kwargs) -> List[models.Product]:
         """Find product information for a specific product on AliExpress.
 
         Args:
             product_id (str): One item ID or product URL.
         """
-        product_id = get_product_id(str(product_id))
-        if product_id:
-            product = aliapi.rest.AliexpressAffiliateProductdetailGetRequest()
-            product.app_signature = None
-            product.fields = None
-            product.product_ids = product_id
-            product.target_currency = self._currency
-            product.target_language = self._language
-            product.tracking_id = self._tracking_id
-            try:
-                response = product.getResponse()
-                response = json.dumps(response)
-                response = json.loads(response, object_hook=lambda d: SimpleNamespace(**d))
-                response = response.aliexpress_affiliate_productdetail_get_response.resp_result
-                if response.resp_code == 200:
-                    response = response.result
-                    if response.current_record_count > 0:
-                        response = response.products.product[0]
-                        return response
-                    else:
-                        raise AliexpressException('Product not available')
-                else:
-                    raise AliexpressException('Server not reached')
-            except Exception as e:
-                raise AliexpressException(e)
+        product_ids = get_product_ids(product_ids)
+        product_ids = get_list_as_string(product_ids)
+
+        request = aliapi.rest.AliexpressAffiliateProductdetailGetRequest()
+        request.app_signature = self._app_signature
+        request.fields = get_list_as_string(fields)
+        request.product_ids = product_ids
+        request.country = country
+        request.target_currency = self._currency
+        request.target_language = self._language
+        request.tracking_id = self._tracking_id
+
+        response = api_request(request, 'aliexpress_affiliate_productdetail_get_response')
+
+        if response.current_record_count > 0:
+            response = parse_products(response.products.product)
+            return response
         else:
-            raise AliexpressException('Product ID not found')
+            raise ProductsNotFoudException('No products found with current parameters')
+
 
     def get_affiliate_links(self,
         links: Union[str, List[str]],
