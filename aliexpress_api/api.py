@@ -51,10 +51,22 @@ class AliexpressApi:
         fields: Union[str, List[str]] = None,
         country: str = None,
         **kwargs) -> List[models.Product]:
-        """Find product information for a specific product on AliExpress.
+        """Get products information.
 
         Args:
-            product_id (str): One item ID or product URL.
+            product_ids (``str | list[str]``): One or more links or product IDs.
+            fields (``str | list[str]``): The fields to include in the results. Defaults to all.
+            country (``str``): Filter products that can be sent to that country. Returns the price
+                according to the country's tax rate policy.
+
+        Returns:
+            ``List[models.Product]``: A list of products.
+
+        Raises:
+            ``ProductsNotFoudException``
+            ``InvalidArgumentException``
+            ``ApiRequestException``
+            ``ApiRequestResponseException``
         """
         product_ids = get_product_ids(product_ids)
         product_ids = get_list_as_string(product_ids)
@@ -84,8 +96,7 @@ class AliexpressApi:
         """Converts a list of links in affiliate links.
 
         Args:
-            links (``str | list[str]``): One or more links as a list of strings or a string
-                separated by commas.
+            links (``str | list[str]``): One or more links to convert.
             link_type (``models.LinkType``): Choose between normal link with standard commission
                 or hot link with hot product commission. Defaults to NORMAL.
 
@@ -134,9 +145,9 @@ class AliexpressApi:
         """Search for affiliated products with high commission.
 
         Args:
-            category_ids (``str | list[str]``): One or more category IDs separated by commas.
+            category_ids (``str | list[str]``): One or more category IDs.
             delivery_days (``int``): Estimated delivery days.
-            fields (``str | list[str]``): The fields to include in the results list separated by commas.
+            fields (``str | list[str]``): The fields to include in the results list. Defaults to all.
             keywords (``str``): Search products based on keywords.
             max_sale_price (``int``): Filters products with price below the specified value.
                 Prices appear in lowest currency denomination. So $31.41 should be 3141.
