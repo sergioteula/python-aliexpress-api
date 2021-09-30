@@ -1,46 +1,54 @@
-AliExpress API wrapper for Python
-=======================================================
-A simple Python wrapper for the [AliExpress Open Platform API](https://developers.aliexpress.com). This module allows to get product information and affiliate links from AliExpress using the official API in an easier way.
+# AliExpress API wrapper for Python
+
+A simple Python wrapper for the [AliExpress Open Platform API](https://developers.aliexpress.com/en). This module allows getting information and affiliate links from AliExpress using the official API in an easier way.
 
 [![PyPI](https://img.shields.io/pypi/v/python-aliexpress-api?color=%231182C2&label=PyPI)](https://pypi.org/project/python-aliexpress-api/)
 [![Python](https://img.shields.io/badge/Python->3.6-%23FFD140)](https://www.python.org/)
 [![License](https://img.shields.io/badge/License-MIT-%23e83633)](https://github.com/sergioteula/python-aliexpress-api/blob/master/LICENSE)
 [![Support](https://img.shields.io/badge/Support-Good-brightgreen)](https://github.com/sergioteula/python-aliexpress-api/issues)
 
+## Features
 
-Features
---------
+- Object oriented interface for simple usage.
+- Ask for new features through the [issues](https://github.com/sergioteula/python-aliexpress-api/issues) section.
+- Join our [Telegram group](https://t.me/PythonAliExpressAPI) for support or development.
 
-* Object oriented interface for simple usage.
-* Get information about a product through its ID or URL.
-* Support for language and currency configuration.
-* Ask for new features through the [issues](https://github.com/sergioteula/python-aliexpress-api/issues) section.
-* Join our [Telegram group](https://t.me/PythonAliExpressAPI) for support or development.
-
-Installation
--------------
+## Installation
 
 You can install or upgrade the module with:
 
     pip install python-aliexpress-api --upgrade
 
+## Usage guide
 
-Usage guide
------------
-**Get product information:**
+**Import and initialize the API:**
 
-    from aliexpress_api import AliexpressApi
-    aliexpress = AliexpressApi(KEY, SECRET, 'ES', 'EUR', TRACKING_ID)
-    product = aliexpress.product_info('1000006468625')
-    print(product.product_title)
+```python
+from aliexpress_api import AliexpressApi, models
+aliexpress = AliexpressApi(KEY, SECRET, models.Language.EN, models.Currency.EUR, TRACKING_ID)
+```
+
+**Get products information:**
+
+```python
+products = aliexpress.get_products_details(['1000006468625', 'https://aliexpress.com/item/1005003091506814.html'])
+print(products[0].product_title, products[1].target_sale_price)
+```
 
 **Get affiliate link:**
 
-    from aliexpress_api import AliexpressApi
-    aliexpress = AliexpressApi(KEY, SECRET, 'EN', 'USD', TRACKING_ID)
-    url = aliexpress.affiliate_link('https://aliexpress.com/item/1000006468625.html')
+```python
+affiliate_links = aliexpress.get_affiliate_links('https://aliexpress.com/item/1005003091506814.html')
+print(affiliate_links[0].promotion_link)
+```
 
+**Get hotproducts:**
 
-License
--------------
+```python
+hotproducts = aliexpress.get_hotproducts(keywords='bluetooth earphones', max_sale_price=3000)
+print(hotproducts.products[0].product_main_image_url)
+```
+
+## License
+
 Copyright © 2020 Sergio Abad. See [license](https://github.com/sergioteula/python-aliexpress-api/blob/master/LICENSE) for details.
