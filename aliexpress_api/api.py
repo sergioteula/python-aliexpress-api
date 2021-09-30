@@ -5,17 +5,13 @@ to get product information and affiliate links from AliExpress using the officia
 API in an easier way.
 """
 
-from aliexpress_api.helpers.arguments import get_product_ids
 from .skd import setDefaultAppInfo
 from .skd import api as aliapi
-from .tools import get_product_id
-from .errors import AliexpressException, ProductsNotFoudException, InvalidTrackingIdException
-from .helpers import api_request, parse_products, get_list_as_string
+from .errors import ProductsNotFoudException, InvalidTrackingIdException
+from .helpers import api_request, parse_products, get_list_as_string, get_product_ids
 from . import models
 
-from types import SimpleNamespace
 from typing import List, Union
-import json
 
 
 class AliexpressApi:
