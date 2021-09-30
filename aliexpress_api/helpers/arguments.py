@@ -1,4 +1,4 @@
-from aliexpress_api.tools.get_product_id import get_product_id
+from ..tools.get_product_id import get_product_id
 from ..errors.exceptions import InvalidArgumentException
 
 
