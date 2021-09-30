@@ -5,14 +5,12 @@ Created on 2012-7-3
 @author: lihao
 '''
 
-try: import httplib
-except ImportError:
-    import http.client as httplib
+
+import http.client as httplib
 import urllib
 import time
 import hashlib
 import json
-import aliexpress.top
 import itertools
 import mimetypes
 
@@ -53,7 +51,7 @@ def sign(secret, parameters):
         keys = parameters.keys()
         keys = list(keys)
         keys.sort()
-        
+
         parameters = "%s%s%s" % (secret,
             str().join('%s%s' % (key, parameters[key]) for key in keys),
             secret)
@@ -68,7 +66,7 @@ def mixStr(pstr):
         return pstr.encode('utf-8')
     else:
         return str(pstr)
-    
+
 class FileItem(object):
     def __init__(self,filename=None,content=None):
         self.filename = filename
@@ -82,7 +80,7 @@ class MultiPartForm(object):
         self.files = []
         self.boundary = "PYTHON_SDK_BOUNDARY"
         return
-    
+
     def get_content_type(self):
         return 'multipart/form-data; boundary=%s' % self.boundary
 
@@ -98,16 +96,16 @@ class MultiPartForm(object):
             mimetype = mimetypes.guess_type(filename)[0] or 'application/octet-stream'
         self.files.append((mixStr(fieldname), mixStr(filename), mixStr(mimetype), mixStr(body)))
         return
-    
+
     def __str__(self):
         """Return a string representing the form data, including attached files."""
         # Build a list of lists, each containing "lines" of the
         # request.  Each part is separated by a boundary string.
         # Once the list is built, return a string where each
-        # line is separated by '\r\n'.  
+        # line is separated by '\r\n'.
         parts = []
         part_boundary = '--' + self.boundary
-        
+
         # Add the form fields
         parts.extend(
             [ part_boundary,
@@ -118,7 +116,7 @@ class MultiPartForm(object):
             ]
             for name, value in self.form_fields
             )
-        
+
         # Add the files to upload
         parts.extend(
             [ part_boundary,
@@ -131,7 +129,7 @@ class MultiPartForm(object):
             ]
             for field_name, filename, content_type, body in self.files
             )
-        
+
         # Flatten the list and add closing boundary marker,
         # then return CR+LF separated data
         flattened = list(itertools.chain(*parts))
@@ -150,7 +148,7 @@ class TopException(Exception):
         self.submsg = None
         self.application_host = None
         self.service_host = None
-    
+
     def __str__(self, *args, **kwargs):
         sb = "errorcode=" + mixStr(self.errorcode) +\
             " message=" + mixStr(self.message) +\
@@ -159,7 +157,7 @@ class TopException(Exception):
             " application_host=" + mixStr(self.application_host) +\
             " service_host=" + mixStr(self.service_host)
         return sb
-       
+
 class RequestException(Exception):
     #===========================================================================
     # 请求连接异常类
@@ -170,7 +168,7 @@ class RestApi(object):
     #===========================================================================
     # Rest api的基类
     #===========================================================================
-    
+
     def __init__(self, domain='gw.api.taobao.com', port = 80):
         #=======================================================================
         # 初始化基类
@@ -180,17 +178,18 @@ class RestApi(object):
         self.__domain = domain
         self.__port = port
         self.__httpmethod = "POST"
-        if(aliexpress.top.getDefaultAppInfo()):
-            self.__app_key = aliexpress.top.getDefaultAppInfo().appkey
-            self.__secret = aliexpress.top.getDefaultAppInfo().secret
-        
+        from .. import getDefaultAppInfo
+        if(getDefaultAppInfo()):
+            self.__app_key = getDefaultAppInfo().appkey
+            self.__secret = getDefaultAppInfo().secret
+
     def get_request_header(self):
         return {
                  'Content-type': 'application/x-www-form-urlencoded;charset=UTF-8',
                  "Cache-Control": "no-cache",
                  "Connection": "Keep-Alive",
         }
-        
+
     def set_app_info(self, appinfo):
         #=======================================================================
         # 设置请求的app信息
@@ -199,19 +198,19 @@ class RestApi(object):
         #=======================================================================
         self.__app_key = appinfo.appkey
         self.__secret = appinfo.secret
-        
+
     def getapiname(self):
         return ""
-    
+
     def getMultipartParas(self):
         return [];
 
     def getTranslateParas(self):
         return {};
-    
+
     def _check_requst(self):
         pass
-    
+
     def getResponse(self, authrize=None, timeout=30):
         #=======================================================================
         # 获取response结果
@@ -239,7 +238,7 @@ class RestApi(object):
         sign_parameter.update(application_parameter)
         sys_parameters[P_SIGN] = sign(self.__secret, sign_parameter)
         connection.connect()
-        
+
         header = self.get_request_header();
         if(self.getMultipartParas()):
             form = MultiPartForm()
@@ -253,11 +252,11 @@ class RestApi(object):
             header['Content-type'] = form.get_content_type()
         else:
             body = urllib.parse.urlencode(application_parameter)
-            
+
         url = N_REST + "?" + urllib.parse.urlencode(sys_parameters)
         connection.request(self.__httpmethod, url, body=body, headers=header)
         response = connection.getresponse();
-        if response.status is not 200:
+        if response.status != 200:
             raise RequestException('invalid http status ' + str(response.status) + ',detail body:' + response.read())
         result = response.read()
         jsonobj = json.loads(result)
@@ -275,8 +274,8 @@ class RestApi(object):
             error.service_host = response.getheader("Location-Host", "")
             raise error
         return jsonobj
-    
-    
+
+
     def getApplicationParameters(self):
         application_parameter = {}
         for key in self.__dict__:
