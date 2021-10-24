@@ -11,7 +11,7 @@ def get_product_id(text: str) -> str:
         return text
 
     # Extract product ID from URL
-    asin = re.search(r'(\/item\/)([0-9]*)(\.)', text)
+    asin = re.search(r'(\/)([0-9]*)(\.)', text)
     if asin:
         return asin.group(2)
     else:
