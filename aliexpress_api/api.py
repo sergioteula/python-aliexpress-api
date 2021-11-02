@@ -6,6 +6,7 @@ API in an easier way.
 """
 
 from aliexpress_api.errors.exceptions import CategoriesNotFoudException
+from aliexpress_api.helpers.categories import filter_main_categories
 from aliexpress_api.models.category import SecondaryCategory
 from .skd import setDefaultAppInfo
 from .skd import api as aliapi
@@ -212,3 +213,18 @@ class AliexpressApi:
             return response.categories.category
         else:
             raise CategoriesNotFoudException('No categories found')
+
+
+    def get_main_categories(self, **kwargs) -> List[models.Category]:
+        """Get all available main categories.
+
+        Returns:
+            ``list[models.Category]``: A list of main categories.
+
+        Raises:
+            ``CategoriesNotFoudException``
+            ``ApiRequestException``
+            ``ApiRequestResponseException``
+        """
+        categories = self.get_categories()
+        return filter_main_categories(categories)
