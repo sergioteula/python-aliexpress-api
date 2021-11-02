@@ -5,6 +5,8 @@ to get product information and affiliate links from AliExpress using the officia
 API in an easier way.
 """
 
+from aliexpress_api.errors.exceptions import CategoriesNotFoudException
+from aliexpress_api.models.category import SecondaryCategory
 from .skd import setDefaultAppInfo
 from .skd import api as aliapi
 from .errors import ProductsNotFoudException, InvalidTrackingIdException
@@ -56,7 +58,7 @@ class AliexpressApi:
                 according to the country's tax rate policy.
 
         Returns:
-            ``List[models.Product]``: A list of products.
+            ``list[models.Product]``: A list of products.
 
         Raises:
             ``ProductsNotFoudException``
@@ -188,3 +190,25 @@ class AliexpressApi:
             return response
         else:
             raise ProductsNotFoudException('No products found with current parameters')
+
+
+    def get_categories(self, **kwargs) -> List[Union[models.Category, SecondaryCategory]]:
+        """Get all available categories, both main and secondary.
+
+        Returns:
+            ``list[models.Category | models.SecondaryCategory]``: A list of categories.
+
+        Raises:
+            ``CategoriesNotFoudException``
+            ``ApiRequestException``
+            ``ApiRequestResponseException``
+        """
+        request = aliapi.rest.AliexpressAffiliateCategoryGetRequest()
+        request.app_signature = self._app_signature
+
+        response = api_request(request, 'aliexpress_affiliate_category_get_response')
+
+        if response.total_result_count > 0:
+            return response.categories.category
+        else:
+            raise CategoriesNotFoudException('No categories found')

@@ -32,6 +32,10 @@ class ProductsNotFoudException(AliexpressException):
     """Raised if no products are found"""
     pass
 
+class CategoriesNotFoudException(AliexpressException):
+    """Raised if no categories are found"""
+    pass
+
 class InvalidTrackingIdException(AliexpressException):
     """Raised if the tracking ID is not present or invalid"""
     pass
