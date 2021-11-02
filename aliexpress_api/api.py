@@ -42,6 +42,7 @@ class AliexpressApi:
         self._language = language
         self._currency = currency
         self._app_signature = app_signature
+        self.categories = None
         setDefaultAppInfo(self._key, self._secret)
 
 
@@ -210,13 +211,17 @@ class AliexpressApi:
         response = api_request(request, 'aliexpress_affiliate_category_get_response')
 
         if response.total_result_count > 0:
-            return response.categories.category
+            self.categories = response.categories.category
+            return self.categories
         else:
             raise CategoriesNotFoudException('No categories found')
 
 
-    def get_parent_categories(self, **kwargs) -> List[models.Category]:
+    def get_parent_categories(self, use_cache=True, **kwargs) -> List[models.Category]:
         """Get all available parent categories.
+
+        Args:
+            use_cache (``bool``): Uses cached categories to reduce API requests.
 
         Returns:
             ``list[models.Category]``: A list of parent categories.
@@ -226,12 +231,17 @@ class AliexpressApi:
             ``ApiRequestException``
             ``ApiRequestResponseException``
         """
-        categories = self.get_categories()
-        return filter_parent_categories(categories)
+        if not use_cache or not self.categories:
+            self.get_categories()
+        return filter_parent_categories(self.categories)
 
 
-    def get_secondary_categories(self, parent_category_id: int, **kwargs) -> List[models.ChildCategory]:
+    def get_secondary_categories(self, parent_category_id: int, use_cache=True, **kwargs) -> List[models.ChildCategory]:
         """Get all available child categories for a specific parent category.
+
+        Args:
+            parent_category_id (``int``): The parent category id.
+            use_cache (``bool``): Uses cached categories to reduce API requests.
 
         Returns:
             ``list[models.ChildCategory]``: A list of child categories.
@@ -241,5 +251,6 @@ class AliexpressApi:
             ``ApiRequestException``
             ``ApiRequestResponseException``
         """
-        categories = self.get_categories()
-        return filter_child_categories(categories, parent_category_id)
+        if not use_cache or not self.categories:
+            self.get_categories()
+        return filter_child_categories(self.categories, parent_category_id)
