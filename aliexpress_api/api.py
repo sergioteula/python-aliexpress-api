@@ -6,8 +6,8 @@ API in an easier way.
 """
 
 from aliexpress_api.errors.exceptions import CategoriesNotFoudException
-from aliexpress_api.helpers.categories import filter_main_categories
-from aliexpress_api.models.category import SecondaryCategory
+from aliexpress_api.helpers.categories import filter_child_categories, filter_parent_categories
+from aliexpress_api.models.category import ChildCategory
 from .skd import setDefaultAppInfo
 from .skd import api as aliapi
 from .errors import ProductsNotFoudException, InvalidTrackingIdException
@@ -193,11 +193,11 @@ class AliexpressApi:
             raise ProductsNotFoudException('No products found with current parameters')
 
 
-    def get_categories(self, **kwargs) -> List[Union[models.Category, SecondaryCategory]]:
-        """Get all available categories, both main and secondary.
+    def get_categories(self, **kwargs) -> List[Union[models.Category, ChildCategory]]:
+        """Get all available categories, both parent and child.
 
         Returns:
-            ``list[models.Category | models.SecondaryCategory]``: A list of categories.
+            ``list[models.Category | models.ChildCategory]``: A list of categories.
 
         Raises:
             ``CategoriesNotFoudException``
@@ -215,11 +215,11 @@ class AliexpressApi:
             raise CategoriesNotFoudException('No categories found')
 
 
-    def get_main_categories(self, **kwargs) -> List[models.Category]:
-        """Get all available main categories.
+    def get_parent_categories(self, **kwargs) -> List[models.Category]:
+        """Get all available parent categories.
 
         Returns:
-            ``list[models.Category]``: A list of main categories.
+            ``list[models.Category]``: A list of parent categories.
 
         Raises:
             ``CategoriesNotFoudException``
@@ -227,4 +227,19 @@ class AliexpressApi:
             ``ApiRequestResponseException``
         """
         categories = self.get_categories()
-        return filter_main_categories(categories)
+        return filter_parent_categories(categories)
+
+
+    def get_secondary_categories(self, parent_category_id: int, **kwargs) -> List[models.ChildCategory]:
+        """Get all available child categories for a specific parent category.
+
+        Returns:
+            ``list[models.ChildCategory]``: A list of child categories.
+
+        Raises:
+            ``CategoriesNotFoudException``
+            ``ApiRequestException``
+            ``ApiRequestResponseException``
+        """
+        categories = self.get_categories()
+        return filter_child_categories(categories, parent_category_id)

@@ -3,5 +3,5 @@ class Category:
     category_name: str
 
 
-class SecondaryCategory(Category):
+class ChildCategory(Category):
     parent_category_id: int
