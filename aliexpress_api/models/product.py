@@ -6,8 +6,10 @@ class Product:
     app_sale_price_currency: str
     commission_rate: str
     discount: str
+    evaluate_rate: str
     first_level_category_id: int
     first_level_category_name: str
+    lastest_volume: int
     hot_product_commission_rate: str
     lastest_volume: int
     original_price: str
@@ -17,6 +19,7 @@ class Product:
     product_main_image_url: str
     product_small_image_urls: List[str]
     product_title: str
+    product_video_url: str
     promotion_link: str
     relevant_market_commission_rate: str
     sale_price: str
