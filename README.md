@@ -50,6 +50,13 @@ hotproducts = aliexpress.get_hotproducts(keywords='bluetooth earphones', max_sal
 print(hotproducts.products[0].product_main_image_url)
 ```
 
+**Get categories:**
+
+```python
+parent_categories = aliexpress.get_parent_categories()
+child_categories = aliexpress.get_child_categories(parent_categories[0].category_id)
+```
+
 ## License
 
 Copyright © 2020 Sergio Abad. See [license](https://github.com/sergioteula/python-aliexpress-api/blob/master/LICENSE) for details.
