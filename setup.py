@@ -5,7 +5,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='python-aliexpress-api',
-    version='2.0.2',
+    version='2.1.0',
     author='Sergio Abad',
     author_email='sergio.abad@bytelix.com',
     description='AliExpress API wrapper for Python',

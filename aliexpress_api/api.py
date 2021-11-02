@@ -5,6 +5,9 @@ to get product information and affiliate links from AliExpress using the officia
 API in an easier way.
 """
 
+from aliexpress_api.errors.exceptions import CategoriesNotFoudException
+from aliexpress_api.helpers.categories import filter_child_categories, filter_parent_categories
+from aliexpress_api.models.category import ChildCategory
 from .skd import setDefaultAppInfo
 from .skd import api as aliapi
 from .errors import ProductsNotFoudException, InvalidTrackingIdException
@@ -39,6 +42,7 @@ class AliexpressApi:
         self._language = language
         self._currency = currency
         self._app_signature = app_signature
+        self.categories = None
         setDefaultAppInfo(self._key, self._secret)
 
 
@@ -56,7 +60,7 @@ class AliexpressApi:
                 according to the country's tax rate policy.
 
         Returns:
-            ``List[models.Product]``: A list of products.
+            ``list[models.Product]``: A list of products.
 
         Raises:
             ``ProductsNotFoudException``
@@ -188,3 +192,65 @@ class AliexpressApi:
             return response
         else:
             raise ProductsNotFoudException('No products found with current parameters')
+
+
+    def get_categories(self, **kwargs) -> List[Union[models.Category, ChildCategory]]:
+        """Get all available categories, both parent and child.
+
+        Returns:
+            ``list[models.Category | models.ChildCategory]``: A list of categories.
+
+        Raises:
+            ``CategoriesNotFoudException``
+            ``ApiRequestException``
+            ``ApiRequestResponseException``
+        """
+        request = aliapi.rest.AliexpressAffiliateCategoryGetRequest()
+        request.app_signature = self._app_signature
+
+        response = api_request(request, 'aliexpress_affiliate_category_get_response')
+
+        if response.total_result_count > 0:
+            self.categories = response.categories.category
+            return self.categories
+        else:
+            raise CategoriesNotFoudException('No categories found')
+
+
+    def get_parent_categories(self, use_cache=True, **kwargs) -> List[models.Category]:
+        """Get all available parent categories.
+
+        Args:
+            use_cache (``bool``): Uses cached categories to reduce API requests.
+
+        Returns:
+            ``list[models.Category]``: A list of parent categories.
+
+        Raises:
+            ``CategoriesNotFoudException``
+            ``ApiRequestException``
+            ``ApiRequestResponseException``
+        """
+        if not use_cache or not self.categories:
+            self.get_categories()
+        return filter_parent_categories(self.categories)
+
+
+    def get_child_categories(self, parent_category_id: int, use_cache=True, **kwargs) -> List[models.ChildCategory]:
+        """Get all available child categories for a specific parent category.
+
+        Args:
+            parent_category_id (``int``): The parent category id.
+            use_cache (``bool``): Uses cached categories to reduce API requests.
+
+        Returns:
+            ``list[models.ChildCategory]``: A list of child categories.
+
+        Raises:
+            ``CategoriesNotFoudException``
+            ``ApiRequestException``
+            ``ApiRequestResponseException``
+        """
+        if not use_cache or not self.categories:
+            self.get_categories()
+        return filter_child_categories(self.categories, parent_category_id)
