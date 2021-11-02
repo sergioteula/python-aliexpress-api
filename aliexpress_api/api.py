@@ -236,7 +236,7 @@ class AliexpressApi:
         return filter_parent_categories(self.categories)
 
 
-    def get_secondary_categories(self, parent_category_id: int, use_cache=True, **kwargs) -> List[models.ChildCategory]:
+    def get_child_categories(self, parent_category_id: int, use_cache=True, **kwargs) -> List[models.ChildCategory]:
         """Get all available child categories for a specific parent category.
 
         Args:
