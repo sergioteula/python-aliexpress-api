@@ -3,18 +3,21 @@ import json
 
 from ..errors import ApiRequestException, ApiRequestResponseException
 
+
 def api_request(request, response_name):
     try:
         response = request.getResponse()
-    except Exception as e:
-        raise ApiRequestException(e.message)
+    except Exception as error:
+        if hasattr(error, 'message'):
+            raise ApiRequestException(error.message) from error
+        raise ApiRequestException(error) from error
 
     try:
         response = response[response_name]['resp_result']
         response = json.dumps(response)
         response = json.loads(response, object_hook=lambda d: SimpleNamespace(**d))
-    except Exception as e:
-        raise ApiRequestResponseException(e)
+    except Exception as error:
+        raise ApiRequestResponseException(error) from error
 
     if response.resp_code == 200:
         return response.result
