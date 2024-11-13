@@ -313,15 +313,7 @@ class AliexpressApi:
         request.tracking_id = tracking_id
         request.user = user
 
-        try:
-            response = api_request(request, 'aliexpress_affiliate_product_smartmatch_response')
-            print(f"Response: {response}")
-        except Exception as e:
-            print(f"Error al obtener productos de AliExpress: {e}")
-            return []
+        response = api_request(request, 'aliexpress_affiliate_product_smartmatch_response')
 
-#        if response.current_record_count > 0:
         response.products = parse_products(response.products.product)
         return response
-#        else:
-#            raise ProductsNotFoudException('No products found with current parameters')
