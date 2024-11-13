@@ -254,3 +254,68 @@ class AliexpressApi:
         if not use_cache or not self.categories:
             self.get_categories()
         return filter_child_categories(self.categories, parent_category_id)
+
+
+    def get_smartmatch_products(self,
+        category_ids: Union[str, List[str]] = None,
+        delivery_days: int = None,
+        fields: Union[str, List[str]] = None,
+        keywords: str = None,
+        max_sale_price: int = None,
+        min_sale_price: int = None,
+        page_no: int = None,
+        page_size: int = None,
+        platform_product_type: models.ProductType = None,
+        ship_to_country: str = None,
+        sort: models.SortBy = None,
+        **kwargs) -> models.SmartMatchProductsResponse:
+        """Retrieve recommended affiliated products based on keywords.
+
+        Args:
+            category_ids (``str | list[str]``): One or more category IDs.
+            delivery_days (``int``): Estimated delivery days.
+            fields (``str | list[str]``): The fields to include in the results list. Defaults to all.
+            keywords (``str``): Keywords to search for related products.
+            max_sale_price (``int``): Filters products with price below the specified value.
+                Prices appear in lowest currency denomination. So $31.41 should be 3141.
+            min_sale_price (``int``): Filters products with price above the specified value.
+                Prices appear in lowest currency denomination. So $31.41 should be 3141.
+            page_no (``int``): Page number for pagination.
+            page_size (``int``): Number of products per page. Should be between 1 and 50.
+            platform_product_type (``models.ProductType``): Specify platform product type.
+            ship_to_country (``str``): Filter products that can be sent to that country.
+                Returns the price according to the country's tax rate policy.
+            sort (``models.SortBy``): Specifies the sort method.
+
+        Returns:
+            ``models.SmartMatchProductsResponse``: Contains response information and the list of products.
+
+        Raises:
+            ``ProductsNotFoundException``: No products found matching the specified parameters.
+            ``ApiRequestException``: API request failed.
+            ``ApiRequestResponseException``: API response contained an error.
+        """
+        request = aliapi.rest.AliexpressAffiliateProductSmartmatchRequest()
+        request.app_signature = self._app_signature
+        request.category_ids = get_list_as_string(category_ids)
+        request.delivery_days = str(delivery_days)
+        request.fields = get_list_as_string(fields)
+        request.keywords = keywords
+        request.max_sale_price = max_sale_price
+        request.min_sale_price = min_sale_price
+        request.page_no = page_no
+        request.page_size = page_size
+        request.platform_product_type = platform_product_type
+        request.ship_to_country = ship_to_country
+        request.sort = sort
+        request.target_currency = self._currency
+        request.target_language = self._language
+        request.tracking_id = self._tracking_id
+
+        response = api_request(request, 'aliexpress_affiliate_product_smartmatch_response')
+
+        if response and response.products:
+            response.products = parse_products(response.products.product)
+            return response
+        else:
+            raise ProductsNotFoudException('No products found with current parameters')
