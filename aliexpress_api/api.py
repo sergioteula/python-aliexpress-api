@@ -314,6 +314,7 @@ class AliexpressApi:
 
         try:
             response = api_request(request, 'aliexpress_affiliate_product_smartmatch_response')
+            print(f"Response: {response}")
         except Exception as e:
             print(f"Error al obtener productos de AliExpress: {e}")
             return []
