@@ -320,8 +320,8 @@ class AliexpressApi:
             print(f"Error al obtener productos de AliExpress: {e}")
             return []
 
-        if response.current_record_count > 0:
-            response.products = parse_products(response.products.product)
-            return response
-        else:
-            raise ProductsNotFoudException('No products found with current parameters')
+#        if response.current_record_count > 0:
+        response.products = parse_products(response.products.product)
+        return response
+#        else:
+#            raise ProductsNotFoudException('No products found with current parameters')
