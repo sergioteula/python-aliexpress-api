@@ -256,7 +256,7 @@ class AliexpressApi:
         return filter_child_categories(self.categories, parent_category_id)
 
 
-    def get_product_smartmatch(self,
+    def get_smart_match_product(self,
             device_id: str,
             country: str = None,
             device: str = None,
@@ -312,8 +312,8 @@ class AliexpressApi:
 
         response = api_request(request, 'aliexpress_affiliate_product_smartmatch_response')
 
-        if response.current_record_count > 0:
-            response.products = parse_products(response.products.product)
-            return response
-        else:
-            raise ProductsNotFoudException('No products found with current parameters')
+#        if response.current_record_count > 0:
+        response.products = parse_products(response.products.product)
+        return response
+ #       else:
+  #          raise ProductsNotFoudException('No products found with current parameters')
