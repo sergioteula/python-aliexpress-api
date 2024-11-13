@@ -256,8 +256,9 @@ class AliexpressApi:
         return filter_child_categories(self.categories, parent_category_id)
 
 
-    def get_smart_match_product(self,
+    def smart_match_product(self,
             device_id: str,
+            app: str,
             country: str = None,
             device: str = None,
             fields: Union[str, List[str]] = None,
@@ -296,6 +297,7 @@ class AliexpressApi:
             ``ApiRequestResponseException``
         """
         request = aliapi.rest.AliexpressAffiliateProductSmartmatchRequest()
+        request.app = app,
         request.app_signature = self._app_signature
         request.country = country
         request.device = device
@@ -312,8 +314,8 @@ class AliexpressApi:
 
         response = api_request(request, 'aliexpress_affiliate_product_smartmatch_response')
 
-#        if response.current_record_count > 0:
-        response.products = parse_products(response.products.product)
-        return response
- #       else:
-  #          raise ProductsNotFoudException('No products found with current parameters')
+        if response.current_record_count > 0:
+            response.products = parse_products(response.products.product)
+            return response
+        else:
+            raise ProductsNotFoudException('No products found with current parameters')
