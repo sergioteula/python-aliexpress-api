@@ -256,7 +256,7 @@ class AliexpressApi:
         return filter_child_categories(self.categories, parent_category_id)
 
 
-    def get_smart_match_products(self,
+    def get_product_smartmatch(self,
             device_id: str,
             country: str = None,
             device: str = None,
