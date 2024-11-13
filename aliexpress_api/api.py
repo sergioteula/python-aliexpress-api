@@ -313,7 +313,10 @@ class AliexpressApi:
         request.tracking_id = tracking_id
         request.user = user
 
-        response = api_request(request, 'aliexpress_affiliate_product_smartmatch_response')
+            response = api_request(request, 'aliexpress_affiliate_product_smartmatch_response')
 
-        response.products = parse_products(response.products.product)
-        return response
+        if hasattr(response, 'products') and response.products:
+            response.products = parse_products(response.products.product)
+            return response
+        else:
+            raise ProductsNotFoudException('No products found with current parameters')
