@@ -323,8 +323,8 @@ class AliexpressApi:
         
     def get_order_list(self,
                        status: str,
-                       end_time: str,
-                       start_time: str = None,
+                       start_time: str,
+                       end_time: str = None,
                        fields: Union[str, List[str]] = None,
                        locale_site: str = None,
                        page_no: int = None,
