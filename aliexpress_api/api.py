@@ -258,7 +258,7 @@ class AliexpressApi:
 
     def smart_match_product(self,
             device_id: str,
-            app: str,
+            app: str = None,
             country: str = None,
             device: str = None,
             fields: Union[str, List[str]] = None,
@@ -312,7 +312,11 @@ class AliexpressApi:
         request.tracking_id = tracking_id
         request.user = user
 
-        response = api_request(request, 'aliexpress_affiliate_product_smartmatch_response')
+        try:
+            response = api_request(request, 'aliexpress_affiliate_product_smartmatch_response')
+        except Exception as e:
+            print(f"Error al obtener productos de AliExpress: {e}")
+            return []
 
         if response.current_record_count > 0:
             response.products = parse_products(response.products.product)
