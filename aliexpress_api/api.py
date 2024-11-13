@@ -256,7 +256,7 @@ class AliexpressApi:
         return filter_child_categories(self.categories, parent_category_id)
 
 
-    def get_smartmatch_products(self,
+    def get_smart_match_products(self,
         category_ids: Union[str, List[str]] = None,
         delivery_days: int = None,
         fields: Union[str, List[str]] = None,
@@ -268,7 +268,7 @@ class AliexpressApi:
         platform_product_type: models.ProductType = None,
         ship_to_country: str = None,
         sort: models.SortBy = None,
-        **kwargs) -> models.SmartMatchProductsResponse:
+        **kwargs) -> models.HotProductsResponse:
         """Retrieve recommended affiliated products based on keywords.
 
         Args:
