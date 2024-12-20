@@ -186,7 +186,6 @@ class AliexpressApi:
         request.tracking_id = self._tracking_id
 
         response = api_request(request, 'aliexpress_affiliate_hotproduct_query_response')
-        print(f"Response: {response}")
 
         if response.current_record_count > 0:
             response.products = parse_products(response.products.product)
