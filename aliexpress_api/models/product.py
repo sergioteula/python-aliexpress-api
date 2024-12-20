@@ -34,3 +34,10 @@ class Product:
     target_original_price_currency: str
     target_sale_price: str
     target_sale_price_currency: str
+
+
+class ProductsResponse:
+    current_page_no: int
+    current_record_count: int
+    total_record_count: int
+    products: List[Product]

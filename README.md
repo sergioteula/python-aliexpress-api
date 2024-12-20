@@ -43,11 +43,18 @@ affiliate_links = aliexpress.get_affiliate_links('https://aliexpress.com/item/10
 print(affiliate_links[0].promotion_link)
 ```
 
+**Get products:**
+
+```python
+response = aliexpress.get_products(keywords='bluetooth earphones', max_sale_price=3000)
+print(response.products[0].product_title)
+```
+
 **Get hotproducts:**
 
 ```python
-hotproducts = aliexpress.get_hotproducts(keywords='bluetooth earphones', max_sale_price=3000)
-print(hotproducts.products[0].product_main_image_url)
+response = aliexpress.get_hotproducts(keywords='bluetooth earphones', max_sale_price=3000)
+print(response.products[0].product_main_image_url)
 ```
 
 **Get categories:**
