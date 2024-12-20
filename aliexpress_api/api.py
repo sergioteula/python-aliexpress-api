@@ -10,7 +10,7 @@ from aliexpress_api.helpers.categories import filter_child_categories, filter_pa
 from aliexpress_api.models.category import ChildCategory
 from .skd import setDefaultAppInfo
 from .skd import api as aliapi
-from .errors import ProductsNotFoudException, InvalidTrackingIdException
+from .errors import ProductsNotFoudException, InvalidTrackingIdException, OrdersNotFoundException
 from .helpers import api_request, parse_products, get_list_as_string, get_product_ids
 from . import models
 
@@ -254,3 +254,115 @@ class AliexpressApi:
         if not use_cache or not self.categories:
             self.get_categories()
         return filter_child_categories(self.categories, parent_category_id)
+
+
+    def smart_match_product(self,
+            device_id: str,
+            app: str = None,
+            country: str = None,
+            device: str = None,
+            fields: Union[str, List[str]] = None,
+            keywords: str = None,
+            page_no: int = None,
+            product_id: str = None,
+            site: str = None,
+            target_currency: str = None,
+            target_language: str = None,
+            tracking_id: str = None,
+            user: str = None,
+            **kwargs) -> models.HotProductsResponse:
+        """
+        Get affiliated products using smart match based on keyword and device information.
+
+        Args:
+            country (``str``): Country code for target location.
+            device (``str``): Device type for targeting (e.g., "mobile", "desktop").
+            device_id (``str``): Unique device ID.
+            fields (``str | list[str]``): Fields to include in the results list. Defaults to all.
+            keywords (``str``): Search products based on keywords.
+            page_no (``int``): Page number of results to fetch.
+            product_id (``str``): Specific product ID to match (optional).
+            site (``str``): Site information for product targeting.
+            target_currency (``str``): Currency code for prices (default is EUR).
+            target_language (``str``): Language code for results (default is ES).
+            tracking_id (``str``): Affiliate tracking ID for results.
+            user (``str``): User identifier for additional targeting (optional).
+
+        Returns:
+            ``models.ProductSmartmatchResponse``: Contains response information and the list of products.
+
+        Raises:
+            ``ProductsNotFoundException``
+            ``ApiRequestException``
+            ``ApiRequestResponseException``
+        """
+        request = aliapi.rest.AliexpressAffiliateProductSmartmatchRequest()
+        request.app = app,
+        request.app_signature = self._app_signature
+        request.country = country
+        request.device = device
+        request.device_id = device_id
+        request.fields = get_list_as_string(fields)
+        request.keywords = keywords
+        request.page_no = page_no
+        request.product_id = product_id
+        request.site = site
+        request.target_currency = target_currency
+        request.target_language = target_language
+        request.tracking_id = tracking_id
+        request.user = user
+
+        response = api_request(request, 'aliexpress_affiliate_product_smartmatch_response')
+
+        if hasattr(response, 'products') and response.products:
+            response.products = parse_products(response.products.product)
+            return response
+        else:
+            raise ProductsNotFoudException('No products found with current parameters')
+        
+    def get_order_list(self,
+                       status: str,
+                       start_time: str,
+                       end_time: str,
+                       fields: Union[str, List[str]] = None,
+                       locale_site: str = None,
+                       page_no: int = None,
+                       page_size: int = None,
+                       **kwargs) -> models.OrderListResponse:
+        """
+        Retrieve a list of affiliate orders from AliExpress.
+
+        Args:
+            start_time (str): Start time in format 'YYYY-MM-DD HH:MM:SS'.
+            end_time (str): End time in format 'YYYY-MM-DD HH:MM:SS'.
+            fields (str | list[str]): The fields to include in the results list.
+            locale_site (str): Locale site, such as 'ru_site' for the Russian site.
+            page_no (int): Page number to fetch.
+            page_size (int): Number of records per page, up to 50.
+            status (str): Status filter for the orders, e.g., 'Payment Completed'.
+
+        Returns:
+            OrderListResponse: Contains response information and the list of orders.
+
+        Raises:
+            ProductsNotFoundException: If no orders are found for the specified parameters.
+            ApiRequestException: If the API request fails.
+        """
+        request = aliapi.rest.AliexpressAffiliateOrderListRequest()
+        request.app_signature = self._app_signature
+        request.start_time = start_time
+        request.end_time = end_time
+        request.fields = ','.join(fields) if isinstance(fields, list) else fields
+        request.locale_site = locale_site
+        request.page_no = page_no
+        request.page_size = page_size
+        request.status = status
+
+        response = api_request(request, 'aliexpress_affiliate_order_list_response')
+
+        if response.current_record_count > 0:
+            return response
+        else:
+            raise OrdersNotFoundException("No orders found for the specified parameters")
+
+

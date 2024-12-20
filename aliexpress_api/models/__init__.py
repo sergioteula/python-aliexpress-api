@@ -5,3 +5,5 @@ from .affiliate_link import AffiliateLink
 from .hotproducts import HotProductsResponse
 from .product import Product
 from .category import Category, ChildCategory
+from .order import Order
+from .orderlist import OrderListResponse

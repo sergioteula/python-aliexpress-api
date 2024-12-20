@@ -39,3 +39,8 @@ class CategoriesNotFoudException(AliexpressException):
 class InvalidTrackingIdException(AliexpressException):
     """Raised if the tracking ID is not present or invalid"""
     pass
+
+class OrdersNotFoundException(AliexpressException):
+    """Raised if no orders are found"""
+    pass
+
