@@ -358,12 +358,10 @@ class AliexpressApi:
         request.page_size = page_size
         request.status = status
 
-        # Llamada a la API
         response = api_request(request, 'aliexpress_affiliate_order_list_response')
 
-        # Verificar si se obtuvieron órdenes
         if response.current_record_count > 0:
-            return response  # Retorna la respuesta completa con los datos de órdenes
+            return response
         else:
             raise OrdersNotFoundException("No orders found for the specified parameters")
 
